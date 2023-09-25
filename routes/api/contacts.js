@@ -1,25 +1,32 @@
 const express = require('express')
-
 const router = express.Router()
+const ctrlContact = require('../../controller/index')
+const validateContactId = require('../../middlewares/errorHandlerID');
+const validateRequestBody = require('../../middlewares/errorHandlerBody');
+const validateStatus = require('../../middlewares/errorHandlerStatus');
 
-router.get('/', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
 
-router.get('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+// validate id
+router.all('/:contactId', validateContactId);
+router.all('/:contactId/favorite', validateContactId);
 
-router.post('/', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
 
-router.delete('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+// GET /api/contacts
+router.get('/', ctrlContact.get)
 
-router.put('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+// GET /api/contacts/:id
+router.get('/:contactId', ctrlContact.getById)
 
-module.exports = router
+// POST /api/contacts
+router.post('/', validateRequestBody, ctrlContact.add)
+
+// DELETE /api/contacts/:id
+router.delete('/:contactId', ctrlContact.remove)
+
+// PUT /api/contacts/:id
+router.put('/:contactId', validateRequestBody, ctrlContact.update)
+
+// PATCH / api / contacts /: contactId / favorite
+router.patch('/:contactId/favorite', validateStatus, ctrlContact.updateStatus)
+
+module.exports = router;
